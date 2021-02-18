@@ -1,9 +1,8 @@
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
-import { makeExecutableSchema } from "graphql-tools";
-import typeDefs from "./schema";
-import resolvers from "./resolvers";
+import { loadFilesSync, makeExecutableSchema, mergeResolvers, mergeTypeDefs } from "graphql-tools";
 import sequelize from "./models";
+import path from "path";
 
 const fm = async () => {
   try {
@@ -14,12 +13,23 @@ const fm = async () => {
   }
 };
 
+const typeDefs = mergeTypeDefs(loadFilesSync(path.join(__dirname, "./schemas")));
+const resolvers = mergeResolvers(loadFilesSync(path.join(__dirname, "./resolvers")));
+
 const schema = makeExecutableSchema({ typeDefs, resolvers });
 const PORT = 8080;
 
 const app = express();
 
-const server = new ApolloServer({ schema });
+const server = new ApolloServer({
+  schema,
+  context: {
+    models: sequelize.models,
+    user: {
+      id: 1,
+    },
+  },
+});
 server.applyMiddleware({ app });
 
 sequelize.sync().then(() => {

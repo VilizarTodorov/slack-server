@@ -6,6 +6,11 @@ function applyExtraSetup(sequelize) {
     foreignKey: "userId",
   });
 
+  user.belongsToMany(channel, {
+    through: "channel_member",
+    foreignKey: "userId",
+  });
+
   team.belongsToMany(user, {
     through: "member",
     foreignKey: "teamId",
@@ -24,6 +29,11 @@ function applyExtraSetup(sequelize) {
 
   channel.belongsTo(team, {
     foreignKey: "teamId",
+  });
+
+  channel.belongsToMany(user, {
+    through: "channel_member",
+    foreignKey: "channelId",
   });
 }
 
