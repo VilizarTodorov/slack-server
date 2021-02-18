@@ -1,8 +1,30 @@
 function applyExtraSetup(sequelize) {
-  const { instrument, orchestra } = sequelize.models;
+  const { user, team, message, channel } = sequelize.models;
 
-  orchestra.hasMany(instrument);
-  instrument.belongsTo(orchestra);
+  user.belongsToMany(team, {
+    through: "member",
+    foreignKey: "userId",
+  });
+
+  team.belongsToMany(user, {
+    through: "member",
+    foreignKey: "teamId",
+  });
+  team.belongsTo(user, {
+    foreignKey: "owner",
+  });
+
+  message.belongsTo(channel, {
+    foreignKey: "channelId",
+  });
+
+  message.belongsTo(user, {
+    foreignKey: "userId",
+  });
+
+  channel.belongsTo(team, {
+    foreignKey: "teamId",
+  });
 }
 
 export default applyExtraSetup;

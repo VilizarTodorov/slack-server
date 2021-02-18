@@ -13,7 +13,6 @@ const fm = async () => {
     console.error("Unable to connect to the database:", error);
   }
 };
-fm();
 
 const schema = makeExecutableSchema({ typeDefs, resolvers });
 const PORT = 8080;
@@ -23,4 +22,7 @@ const app = express();
 const server = new ApolloServer({ schema });
 server.applyMiddleware({ app });
 
-app.listen({ port: PORT }, () => console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`));
+sequelize.sync().then(() => {
+  app.listen({ port: PORT }, () => console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`));
+  fm();
+});

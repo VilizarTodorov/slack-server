@@ -1,21 +1,18 @@
 import { Sequelize } from "sequelize";
 import applyExtraSetup from "./applyExtraSetup";
-import UserModel from "./user.model";
-import InstrumentModel from "./instrument.model";
-import OrchestraModel from "./orchestra.model";
+import UserModelDefiner from "./user.model";
+import TeamModelDefiner from "./team.model";
+import MessageModelDefiner from "./message.model";
+import ChannelModelDefiner from "./channel.model";
 
-const sequelize = new Sequelize("postgres", "postgres", "5550155", {
-  dialect: "postgres",
-  host: "localhost",
-  port: 5432,
-});
+const sequelize = new Sequelize("postgres://postgres:5550155@localhost:5432/postgres");
 
 const modelDefiners = [
-  UserModel,
-  InstrumentModel,
-  OrchestraModel,
+  UserModelDefiner,
+  TeamModelDefiner,
+  MessageModelDefiner,
+  ChannelModelDefiner,
   // Add more models here...
-  // require('./models/item'),
 ];
 
 // We define all models according to their files.
