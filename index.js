@@ -3,6 +3,7 @@ import { ApolloServer } from "apollo-server-express";
 import { loadFilesSync, makeExecutableSchema, mergeResolvers, mergeTypeDefs } from "graphql-tools";
 import sequelize from "./models";
 import path from "path";
+import { SECRET, SECRET2 } from "./helpers/constants";
 
 const fm = async () => {
   try {
@@ -28,6 +29,8 @@ const server = new ApolloServer({
     user: {
       id: 1,
     },
+    SECRET,
+    SECRET2,
   },
 });
 server.applyMiddleware({ app });

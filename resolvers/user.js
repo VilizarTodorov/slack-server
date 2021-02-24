@@ -1,6 +1,5 @@
-import bcrypt from "bcrypt";
 import { formatErrors } from "../helpers/functions";
-import { SALT_ROUNDS } from "../helpers/constants";
+import { tryLogin } from "../session/auth";
 
 export default {
   Query: {
@@ -8,22 +7,18 @@ export default {
     allUsers: (parent, args, { models }, info) => models.user.findAll(),
   },
   Mutation: {
+    login: (parent, { email, password }, { models, SECRET, SECRET2 }, info) => {
+      return tryLogin(email, password, models, SECRET, SECRET2);
+    },
     register: async (parent, { username, email, password }, { models }, info) => {
-      if (password.length < 5 || password.length > 100) {
-        return {
-          ok: false,
-          errors: [{ path: "password", message: "The password needs to be between 5 and 100 characters long." }],
-        };
-      }
-
       try {
-        const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-        const user = await models.user.create({ username, email, password: hashedPassword });
+        const user = await models.user.create({ username, email, password });
         return {
           ok: true,
           user,
         };
       } catch (error) {
+        console.log(error)
         return {
           ok: false,
           errors: formatErrors(error),

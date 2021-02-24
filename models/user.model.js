@@ -1,4 +1,6 @@
 import { DataTypes } from "sequelize";
+import bcrypt from "bcrypt";
+import { SALT_ROUNDS } from "../helpers/constants";
 
 export default (sequelize) => {
   sequelize.define(
@@ -33,9 +35,21 @@ export default (sequelize) => {
       password: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+          len: {
+            args: [5, 100],
+            msg: "The password needs to be between 5 and 100 characters long.",
+          },
+        },
       },
     },
     {
+      hooks: {
+        afterValidate: async (user) => {
+          const hashedPassword = await bcrypt.hash(user.password, SALT_ROUNDS);
+          user.password = hashedPassword;
+        },
+      },
       underscored: true,
     }
   );
