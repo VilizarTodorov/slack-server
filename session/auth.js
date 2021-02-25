@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import _ from "lodash";
+import { SECRET, SECRET2 } from "../helpers/constants";
 
 export const createTokens = async (user, secret, secret2) => {
   const token = jwt.sign(
@@ -24,6 +25,46 @@ export const createTokens = async (user, secret, secret2) => {
   );
 
   return [token, refreshToken];
+};
+
+export const refreshTokens = async (token, refreshToken, models, SECRET, SECRET2) => {
+  let userId = 0;
+  try {
+    const {
+      user: { id },
+    } = jwt.decode(refreshToken);
+
+    userId = id;
+  } catch (error) {
+    console.log(error)
+    return {};
+  }
+
+  if (!userId) {
+    return {};
+  }
+
+  const user = await models.user.findOne({ where: { id: userId }, raw: true });
+
+  if (!user) {
+    return {};
+  }
+
+  const refreshTokenSecret = `${user.password}${SECRET2}`;
+
+  try {
+    jwt.verify(refreshToken, refreshTokenSecret);
+  } catch (error) {
+    console.log(error)
+    return {};
+  }
+
+  const [newToken, newRefreshToken] = await createTokens(user, SECRET, refreshTokenSecret);
+  return {
+    token: newToken,
+    refreshToken: newRefreshToken,
+    user,
+  };
 };
 
 export const tryLogin = async (email, password, models, SECRET, SECRET2) => {
