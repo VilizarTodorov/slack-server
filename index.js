@@ -58,14 +58,6 @@ const server = new ApolloServer({
       SECRET2,
     };
   },
-  // context: {
-  //   models: sequelize.models,
-  //   user: {
-  //     id: 1,
-  //   },
-  //   SECRET,
-  //   SECRET2,
-  // },
 });
 server.applyMiddleware({ app });
 

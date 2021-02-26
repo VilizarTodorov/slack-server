@@ -1,8 +1,9 @@
 import { formatError } from "graphql";
+import { requireAuth } from "../session/permissions";
 
 export default {
   Mutation: {
-    createTeam: async (parent, args, { models, user }, info) => {
+    createTeam: requireAuth.createResolver(async (parent, args, { models, user }, info) => {
       try {
         await models.team.create({ ...args, owner: user.id });
         return {
@@ -15,6 +16,6 @@ export default {
           errors: formatError(error),
         };
       }
-    },
+    }),
   },
 };
