@@ -1,4 +1,4 @@
-import { formatError } from "graphql";
+import { formatErrors } from "../helpers/functions";
 import { requireAuth } from "../session/permissions";
 
 export default {
@@ -19,7 +19,7 @@ export default {
       } catch (error) {
         return {
           ok: false,
-          errors: formatError(error),
+          errors: formatErrors(error),
         };
       }
     }),
