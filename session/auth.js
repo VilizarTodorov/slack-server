@@ -1,16 +1,16 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import _ from "lodash";
-import { SECRET, SECRET2 } from "../helpers/constants";
+// import { SECRET, SECRET2 } from "../helpers/constants";
 
 export const createTokens = async (user, secret, secret2) => {
   const token = jwt.sign(
     {
-      user: _.pick(user, ["id"]),
+      user: _.pick(user, ["id", "username"]),
     },
     secret,
     {
-      expiresIn: "30s",
+      expiresIn: "1h",
     }
   );
 
@@ -36,7 +36,6 @@ export const refreshTokens = async (token, refreshToken, models, SECRET, SECRET2
 
     userId = id;
   } catch (error) {
-    console.log(error)
     return {};
   }
 
@@ -55,7 +54,7 @@ export const refreshTokens = async (token, refreshToken, models, SECRET, SECRET2
   try {
     jwt.verify(refreshToken, refreshTokenSecret);
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return {};
   }
 

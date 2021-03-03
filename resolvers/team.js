@@ -2,20 +2,30 @@ import { formatError } from "graphql";
 import { requireAuth } from "../session/permissions";
 
 export default {
+  Query: {
+    allTeams: requireAuth.createResolver(async (parent, args, { models, user }, info) => {
+      return models.team.findAll({ where: { owner: user.id } }, { raw: true });
+    }),
+  },
   Mutation: {
     createTeam: requireAuth.createResolver(async (parent, args, { models, user }, info) => {
       try {
-        await models.team.create({ ...args, owner: user.id });
+        const team = await models.team.create({ ...args, owner: user.id });
+        await models.channel.create({ name: "general", public: true, teamId: team.id });
         return {
           ok: true,
+          team,
         };
       } catch (error) {
-        console.log(error);
         return {
           ok: false,
           errors: formatError(error),
         };
       }
     }),
+  },
+  Team: {
+    channels: ({ id }, args, { models, user }, info) =>
+      models.channel.findAll({ where: { teamId: id } }, { raw: true }),
   },
 };
