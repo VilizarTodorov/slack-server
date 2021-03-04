@@ -1,8 +1,8 @@
 function applyExtraSetup(sequelize) {
-  const { user, team, message, channel } = sequelize.models;
+  const { user, team, message, channel, member } = sequelize.models;
 
   user.belongsToMany(team, {
-    through: "member",
+    through: member,
     foreignKey: "userId",
   });
 
@@ -12,7 +12,7 @@ function applyExtraSetup(sequelize) {
   });
 
   team.belongsToMany(user, {
-    through: "member",
+    through: member,
     foreignKey: "teamId",
   });
   team.belongsTo(user, {

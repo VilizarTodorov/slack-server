@@ -4,9 +4,10 @@ export default {
   Mutation: {
     createChannel: async (parent, args, { models }, info) => {
       try {
-        await models.channel.create(args);
+        const channel = await models.channel.create(args);
         return {
           ok: true,
+          channel,
         };
       } catch (error) {
         return {

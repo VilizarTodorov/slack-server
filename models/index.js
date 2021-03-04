@@ -4,6 +4,7 @@ import UserModelDefiner from "./user.model";
 import TeamModelDefiner from "./team.model";
 import MessageModelDefiner from "./message.model";
 import ChannelModelDefiner from "./channel.model";
+import MemberModelDefiner from "./member.model";
 
 const sequelize = new Sequelize("postgres://postgres:5550155@localhost:5432/postgres");
 
@@ -12,6 +13,7 @@ const modelDefiners = [
   TeamModelDefiner,
   MessageModelDefiner,
   ChannelModelDefiner,
+  MemberModelDefiner,
   // Add more models here...
 ];
 

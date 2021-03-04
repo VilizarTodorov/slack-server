@@ -11,7 +11,12 @@ export default gql`
 
   type CreateTeamResponse {
     ok: Boolean!
-    team: Team!
+    team: Team
+    errors: [Error!]
+  }
+
+  type VoidResponse {
+    ok: Boolean!
     errors: [Error!]
   }
 
@@ -21,5 +26,6 @@ export default gql`
 
   type Mutation {
     createTeam(name: String!): CreateTeamResponse!
+    addTeamMember(email: String!, teamId: Int!): VoidResponse
   }
 `;

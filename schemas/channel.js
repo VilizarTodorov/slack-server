@@ -11,6 +11,7 @@ export default gql`
 
   type CreateChannelResponse {
     ok: Boolean!
+    channel:Channel
     errors: [Error!]
   }
 
