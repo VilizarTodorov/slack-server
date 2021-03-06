@@ -1,6 +1,17 @@
+import { requireAuth } from "../session/permissions";
+
 export default {
+  Message: {
+    user: ({ userId }, args, { models }) => models.user.findOne({ where: { id: userId } }, { raw: true }),
+  },
+  Query: {
+    messages: requireAuth.createResolver(async (parent, { channelId }, { models, user }, info) => {
+      const res = await models.message.findAll({ where: { channelId } }, { raw: true });
+      return res;
+    }),
+  },
   Mutation: {
-    createMessage: async (parent, args, { models, user }, info) => {
+    createMessage: requireAuth.createResolver(async (parent, args, { models, user }, info) => {
       try {
         await models.message.create({ ...args, userId: user.id });
         return true;
@@ -8,6 +19,6 @@ export default {
         console.log(error);
         return false;
       }
-    },
+    }),
   },
 };
