@@ -1,4 +1,5 @@
 import { formatErrors } from "../helpers/functions";
+import sequelize from "../models";
 import { requireAuth } from "../session/permissions";
 
 export default {
@@ -6,15 +7,26 @@ export default {
     allTeams: requireAuth.createResolver(async (parent, args, { models, user }, info) => {
       return models.team.findAll({ where: { owner: user.id } }, { raw: true });
     }),
+    inviteTeams: requireAuth.createResolver(async (parent, args, { models, user }, info) => {
+      return models.team.findAll(
+        {
+          include: [{ model: models.user, where: { id: user.id } }],
+        },
+        { raw: true } 
+      );
+    }),
   },
   Mutation: {
     createTeam: requireAuth.createResolver(async (parent, args, { models, user }, info) => {
       try {
-        const team = await models.team.create({ ...args, owner: user.id });
-        await models.channel.create({ name: "general", public: true, teamId: team.id });
+        const response = await sequelize.transaction(async (t) => {
+          const team = await models.team.create({ ...args, owner: user.id });
+          await models.channel.create({ name: "general", public: true, teamId: team.id });
+          return team;
+        });
         return {
           ok: true,
-          team,
+          team: response,
         };
       } catch (error) {
         return {

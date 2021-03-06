@@ -61,7 +61,7 @@ const server = new ApolloServer({
 });
 server.applyMiddleware({ app });
 
-sequelize.sync({ force: true }).then(() => {
+sequelize.sync().then(() => {
   app.listen({ port: PORT }, () => console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`));
   fm();
 });
